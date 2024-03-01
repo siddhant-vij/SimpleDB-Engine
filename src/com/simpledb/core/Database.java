@@ -5,34 +5,48 @@ import com.simpledb.utils.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public final class Database {
+public class Database {
   private final Map<String, Table> tables = new HashMap<>();
   private final String databasePath;
 
-  private Database(String databasePath) {
+  public Database(String databasePath) {
     this.databasePath = databasePath;
   }
 
-  public static Database createDatabase(String databasePath) {
-    return new Database(databasePath);
-  }
-
-  public void createTable(String tableName, Map<String, String> columns) throws IOException {
-    Table newTable = Table.create(tableName, columns);
+  public void createTable(String tableName, List<String> columns) {
+    if (tables.containsKey(tableName)) {
+      throw new IllegalArgumentException("Table already exists: " + tableName);
+    }
+    Table newTable = new Table(tableName, columns);
     tables.put(tableName, newTable);
-    FileUtils.writeTableToFile(newTable, databasePath + "/" + tableName + ".json");
+    try {
+      FileUtils.writeTableToFile(newTable, databasePath + "/" + tableName + ".json");
+    } catch (IOException e) {
+      System.out.println("Error creating table: " + e.getMessage());
+      tables.remove(tableName);
+      System.exit(1);
+    }
   }
 
   public void dropTable(String tableName) {
+    if (!tables.containsKey(tableName)) {
+      throw new IllegalArgumentException("Table does not exist: " + tableName);
+    }
     tables.remove(tableName);
     new File(databasePath + "/" + tableName + ".json").delete();
   }
 
-  public Map<String, Table> getTables() {
-    return Collections.unmodifiableMap(tables);
+  public Table getTable(String tableName) {
+    String filePath = databasePath + "/" + tableName + ".json";
+    try {
+      return FileUtils.readTableFromFile(filePath);
+    } catch (IOException e) {
+      System.out.println("Error getting table: " + e.getMessage());
+      return null;
+    }
   }
 }

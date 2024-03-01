@@ -1,16 +1,13 @@
 package com.simpledb.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.simpledb.model.Table;
-
 import java.io.File;
 import java.io.IOException;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.simpledb.model.Table;
+
 public class FileUtils {
   private static final ObjectMapper objectMapper = new ObjectMapper();
-
-  private FileUtils() {
-  }
 
   public static void writeTableToFile(Table table, String filePath) throws IOException {
     objectMapper.writeValue(new File(filePath), table);

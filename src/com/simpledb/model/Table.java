@@ -1,39 +1,34 @@
 package com.simpledb.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public final class Table {
+public class Table {
   private final String name;
-  private final Map<String, String> columns;
+  private final List<String> columns;
+  // columns can be made as Map<String, String>
+  // to support data types & validation functionality
   private final List<Record> records;
 
-  private Table(String name, Map<String, String> columns, List<Record> records) {
+  public Table(String name, List<String> columns) {
     this.name = name;
-    this.columns = Collections.unmodifiableMap(new HashMap<>(columns));
-    this.records = Collections.unmodifiableList(new ArrayList<>(records));
-  }
-
-  public static Table create(String name, Map<String, String> columns) {
-    return new Table(name, columns, new ArrayList<>());
+    this.columns = new ArrayList<>(columns);
+    this.records = new ArrayList<>();
   }
 
   public String getName() {
     return name;
   }
 
-  public Map<String, String> getColumns() {
-    return columns;
-  }
-
-  public List<Record> getRecords() {
-    return records;
+  public List<String> getColumns() {
+    return new ArrayList<>(columns);
   }
 
   public void addRecord(Record record) {
-    records.add(record);
+    this.records.add(record);
+  }
+
+  public List<Record> getRecords() {
+    return new ArrayList<>(records);
   }
 }

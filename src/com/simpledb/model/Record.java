@@ -1,12 +1,20 @@
 package com.simpledb.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class Record {
   private Map<String, Object> fields;
 
-  private Record(Map<String, Object> fields) {
+  public Record() {
+    fields = new HashMap<>();
+  }
+
+  @JsonCreator
+  public Record(@JsonProperty("fields") Map<String, Object> fields) {
     this.fields = new HashMap<>(fields);
   }
 

@@ -12,12 +12,13 @@ import java.util.stream.Collectors;
 
 public class QueryParser {
 
-  private static final Pattern CREATE_PATTERN = Pattern.compile("CREATE TABLE (\\w+) \\((.*)\\)");
-  private static final Pattern INSERT_PATTERN = Pattern.compile("INSERT INTO (\\w+) \\((.*)\\) VALUES \\((.*)\\)");
-  private static final Pattern SELECT_PATTERN = Pattern.compile("SELECT \\* FROM (\\w+)( WHERE (.*))?");
-  private static final Pattern UPDATE_PATTERN = Pattern.compile("UPDATE (\\w+) SET (.*) WHERE (.*)");
-  private static final Pattern DELETE_PATTERN = Pattern.compile("DELETE FROM (\\w+) WHERE (.*)");
-  private static final Pattern DROP_PATTERN = Pattern.compile("DROP TABLE (\\w+)");
+  private static final Pattern CREATE_PATTERN = Pattern.compile("CREATE TABLE (\\w+) \\((.*)\\);");
+  private static final Pattern INSERT_PATTERN = Pattern
+      .compile("INSERT INTO (\\w+) \\(([^)]*)\\) VALUES (\\([^)]*\\)(?:, \\([^)]*\\))*)[;]?");
+  private static final Pattern SELECT_PATTERN = Pattern.compile("SELECT \\* FROM (\\w+)( WHERE (.*))?;");
+  private static final Pattern UPDATE_PATTERN = Pattern.compile("UPDATE (\\w+) SET (.*) WHERE (.*);");
+  private static final Pattern DELETE_PATTERN = Pattern.compile("DELETE FROM (\\w+) WHERE (.*);");
+  private static final Pattern DROP_PATTERN = Pattern.compile("DROP TABLE (\\w+);");
 
   public static ParsedQuery parse(String query) throws RuntimeException {
     String queryType = determineQueryType(query);
@@ -32,8 +33,15 @@ public class QueryParser {
       case "INSERT":
         matcher = INSERT_PATTERN.matcher(query);
         matcher.find();
-        return new ParsedQuery("INSERT", matcher.group(1), Arrays.asList(matcher.group(2).split(",\\s*")),
-            Arrays.asList(matcher.group(3).split(",\\s*")), null, null);
+        String tableName = matcher.group(1);
+        List<String> columns = Arrays.asList(matcher.group(2).split(",\\s*"));
+        String valuesGroup = matcher.group(3);
+        List<List<String>> values = Arrays
+            .stream(valuesGroup.split("\\),\\s*\\("))
+            .map(v -> v.replaceAll("^\\(|\\)$", ""))
+            .map(v -> Arrays.asList(v.split(",\\s*")))
+            .collect(Collectors.toList());
+        return new ParsedQuery("INSERT", tableName, columns, values, null, null);
 
       case "SELECT":
         matcher = SELECT_PATTERN.matcher(query);
@@ -109,11 +117,11 @@ public class QueryParser {
     public final String type;
     public final String tableName;
     public final List<String> columns;
-    public final List<String> values;
+    public final List<List<String>> values;
     public final Predicate<Record> condition;
     public final Map<String, String> updateSet;
 
-    public ParsedQuery(String type, String tableName, List<String> columns, List<String> values,
+    public ParsedQuery(String type, String tableName, List<String> columns, List<List<String>> values,
         Predicate<Record> condition, Map<String, String> updateSet) {
       this.type = type;
       this.tableName = tableName;

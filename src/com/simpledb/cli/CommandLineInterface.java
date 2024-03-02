@@ -45,12 +45,12 @@ public class CommandLineInterface {
 
   private void printHelp() {
     System.out.println("\nAvailable commands:");
-    System.out.println("CREATE TABLE <tableName> (<column1> <type1>, ...)");
-    System.out.println("INSERT INTO <tableName> (<column1>, ...) VALUES (<value1>, ...)");
-    System.out.println("SELECT * FROM <tableName> [WHERE <condition>]");
-    System.out.println("UPDATE <tableName> SET <column1>=<value1>, ... [WHERE <condition>]");
-    System.out.println("DELETE FROM <tableName> [WHERE <condition>]");
-    System.out.println("DROP TABLE <tableName>");
+    System.out.println("CREATE TABLE <tableName> (<column1> <type1>, ...);");
+    System.out.println("INSERT INTO <tableName> (<column1>, ...) VALUES (<value1>, ...), (<value1>, ...), ...;");
+    System.out.println("SELECT * FROM <tableName> [WHERE <condition>];");
+    System.out.println("UPDATE <tableName> SET <column1>=<value1>, ... [WHERE <condition>];");
+    System.out.println("DELETE FROM <tableName> [WHERE <condition>];");
+    System.out.println("DROP TABLE <tableName>;");
     System.out.println("help - Show this help menu");
     System.out.println("exit - Exit the CLI");
   }

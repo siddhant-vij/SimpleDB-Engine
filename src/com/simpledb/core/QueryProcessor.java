@@ -56,11 +56,18 @@ public class QueryProcessor {
   }
 
   private void handleInsert(ParsedQuery query) throws RuntimeException {
-    Map<String, Object> fields = new HashMap<>();
-    for (int i = 0; i < query.columns.size(); i++) {
-      fields.put(query.columns.get(i), query.values.get(i));
+    for (List<String> valueSet : query.values) {
+      if (query.columns.size() != valueSet.size()) {
+        throw new RuntimeException("Mismatch between column count and values count.");
+      }
+
+      Map<String, Object> fields = new HashMap<>();
+      for (int i = 0; i < query.columns.size(); i++) {
+        fields.put(query.columns.get(i), valueSet.get(i));
+      }
+
+      crudOperations.insertRecord(query.tableName, fields);
     }
-    crudOperations.insertRecord(query.tableName, fields);
   }
 
   private void handleSelect(ParsedQuery query) throws RuntimeException {

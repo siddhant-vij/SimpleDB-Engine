@@ -1,6 +1,6 @@
 # SimpleDB Engine
 
-SimpleDB Engine is a lightweight, file-based database engine designed to support basic CRUD operations, simple query processing, and transactions.
+SimpleDB Engine is a lightweight, file-based database engine designed to support basic CRUD operations, simple query processing, and concurrency control.
 <br>
 <br>
 Inspired by the need for a straightforward and easy-to-use database system, SimpleDB Engine offers a robust solution for small-scale applications that require minimal setup and maintenance.
@@ -22,7 +22,7 @@ Inspired by the need for a straightforward and easy-to-use database system, Simp
 - **Lightweight and File-based**: Utilizes JSON for easy data manipulation and human readability.
 - **CRUD Operations**: Supports Create, Read, Update, and Delete operations.
 - **Simple Query Processing**: Uses RegEx for parsing simple query syntax.
-- **Transactions and Concurrency Control**: Implements basic locking mechanisms for safe concurrent read/write operations.
+- **Concurrency Control**: Implements basic locking mechanisms for safe concurrent read/write operations.
 - **CLI Interface**: Provides a Command Line Interface for database management and query execution.
 
 <br>
@@ -68,10 +68,10 @@ Contributions are what make the open-source community such an amazing place to l
 
 ## Future Improvements
 
-- **Security and Authentication**: Add security and user authentication mechanisms for improved database access.
-- **Enhanced Query Processing**: Introduce more complex querying capabilities.
-- **Improved Transaction Management**: Implement more sophisticated transaction management to handle larger volumes of concurrent operations.
+- **Enhanced Query Processing**: Introduce more complex querying capabilities for advanced SQL queries.
+- **Improved Transaction Management**: Implement transaction management with the ability to Commit/Rollback changes to a consistent state with a complete focus on ACID properties.
 - **Performance Optimization**: Optimize data storage and retrieval processes for faster access times.
+- **Security and Authentication**: Add security and user authentication mechanisms for improved database access.
 - **GUI Interface**: Develop a graphical user interface for easier database management.
 
 <br>

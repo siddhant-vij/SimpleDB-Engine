@@ -19,7 +19,7 @@ public class QueryParser {
   private static final Pattern DELETE_PATTERN = Pattern.compile("DELETE FROM (\\w+) WHERE (.*)");
   private static final Pattern DROP_PATTERN = Pattern.compile("DROP TABLE (\\w+)");
 
-  public static ParsedQuery parse(String query) {
+  public static ParsedQuery parse(String query) throws RuntimeException {
     String queryType = determineQueryType(query);
     Matcher matcher;
 
@@ -60,7 +60,7 @@ public class QueryParser {
         return new ParsedQuery("DROP", matcher.group(1), null, null, null, null);
 
       default:
-        throw new IllegalArgumentException("Unsupported query format.");
+        throw new RuntimeException("Unsupported query format.");
     }
   }
 
@@ -91,14 +91,14 @@ public class QueryParser {
   }
 
   // Future improvement: Enhance this method to support more complex conditions.
-  private static Predicate<Record> parseCondition(String conditionStr) {
+  private static Predicate<Record> parseCondition(String conditionStr) throws RuntimeException {
     if (conditionStr == null || conditionStr.trim().isEmpty()) {
       return record -> true; // All records match.
     }
     // Assuming a simple "field=value" condition.
     String[] parts = conditionStr.split("=");
     if (parts.length != 2) {
-      throw new IllegalArgumentException("Invalid condition format");
+      throw new RuntimeException("Invalid condition format");
     }
     String field = parts[0].trim();
     String value = parts[1].trim();

@@ -17,9 +17,9 @@ public class Database {
     this.databasePath = databasePath;
   }
 
-  public void createTable(String tableName, List<String> columns) {
+  public void createTable(String tableName, List<String> columns) throws RuntimeException {
     if (tables.containsKey(tableName)) {
-      throw new IllegalArgumentException("Table already exists: " + tableName);
+      throw new RuntimeException("Table already exists: " + tableName);
     }
     Table newTable = new Table(tableName, columns);
     tables.put(tableName, newTable);
@@ -32,9 +32,9 @@ public class Database {
     }
   }
 
-  public void dropTable(String tableName) {
+  public void dropTable(String tableName) throws RuntimeException {
     if (!tables.containsKey(tableName)) {
-      throw new IllegalArgumentException("Table does not exist: " + tableName);
+      throw new RuntimeException("Table does not exist: " + tableName);
     }
     tables.remove(tableName);
     new File(databasePath + "/" + tableName + ".json").delete();

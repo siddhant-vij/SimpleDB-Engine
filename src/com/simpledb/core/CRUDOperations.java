@@ -19,7 +19,7 @@ public class CRUDOperations {
     this.lockManager = lockManager;
   }
 
-  public void createTable(String tableName, List<String> columns) {
+  public void createTable(String tableName, List<String> columns) throws RuntimeException {
     lockManager.acquireWriteLock(tableName);
     try {
       database.createTable(tableName, columns);
@@ -28,12 +28,12 @@ public class CRUDOperations {
     }
   }
 
-  public void insertRecord(String tableName, Map<String, Object> fields) {
+  public void insertRecord(String tableName, Map<String, Object> fields) throws RuntimeException {
     lockManager.acquireWriteLock(tableName);
     try {
       Table table = database.getTable(tableName);
       if (table == null) {
-        throw new IllegalArgumentException("Table " + tableName + " does not exist.");
+        throw new RuntimeException("Table " + tableName + " does not exist.");
       }
       Record record = Record.create(fields);
       table.addRecord(record);
@@ -42,12 +42,12 @@ public class CRUDOperations {
     }
   }
 
-  public List<Record> selectRecords(String tableName, Predicate<Record> condition) {
+  public List<Record> selectRecords(String tableName, Predicate<Record> condition) throws RuntimeException {
     lockManager.acquireReadLock(tableName);
     try {
       Table table = database.getTable(tableName);
       if (table == null) {
-        throw new IllegalArgumentException("Table " + tableName + " does not exist.");
+        throw new RuntimeException("Table " + tableName + " does not exist.");
       }
       return table.getRecords()
           .stream()
@@ -58,12 +58,13 @@ public class CRUDOperations {
     }
   }
 
-  public void updateRecords(String tableName, Map<String, Object> updates, Predicate<Record> condition) {
+  public void updateRecords(String tableName, Map<String, Object> updates, Predicate<Record> condition)
+      throws RuntimeException {
     lockManager.acquireWriteLock(tableName);
     try {
       Table table = database.getTable(tableName);
       if (table == null) {
-        throw new IllegalArgumentException("Table " + tableName + " does not exist.");
+        throw new RuntimeException("Table " + tableName + " does not exist.");
       }
       table.getRecords()
           .stream()
@@ -73,7 +74,7 @@ public class CRUDOperations {
               if (table.getColumns().contains(key)) {
                 record.updateField(key, value);
               } else {
-                throw new IllegalArgumentException("Column " + key + " does not exist in table " + tableName);
+                throw new RuntimeException("Column " + key + " does not exist in table " + tableName);
               }
             });
           });
@@ -82,12 +83,12 @@ public class CRUDOperations {
     }
   }
 
-  public void deleteRecords(String tableName, Predicate<Record> condition) {
+  public void deleteRecords(String tableName, Predicate<Record> condition) throws RuntimeException {
     lockManager.acquireWriteLock(tableName);
     try {
       Table table = database.getTable(tableName);
       if (table == null) {
-        throw new IllegalArgumentException("Table " + tableName + " does not exist.");
+        throw new RuntimeException("Table " + tableName + " does not exist.");
       }
       table.getRecords().removeIf(condition);
     } finally {
@@ -95,7 +96,7 @@ public class CRUDOperations {
     }
   }
 
-  public void dropTable(String tableName) {
+  public void dropTable(String tableName) throws RuntimeException {
     lockManager.acquireWriteLock(tableName);
     try {
       database.dropTable(tableName);

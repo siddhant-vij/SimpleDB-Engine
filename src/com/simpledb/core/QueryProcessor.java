@@ -17,7 +17,7 @@ public class QueryProcessor {
     this.crudOperations = crudOperations;
   }
 
-  public void processQuery(String queryString) {
+  public void processQuery(String queryString) throws RuntimeException {
     ParsedQuery query = QueryParser.parse(queryString);
 
     switch (query.type) {
@@ -40,11 +40,11 @@ public class QueryProcessor {
         handleDrop(query);
         break;
       default:
-        throw new IllegalArgumentException("Unsupported operation: " + query.type);
+        throw new RuntimeException("Unsupported operation: " + query.type);
     }
   }
 
-  private void handleCreate(ParsedQuery query) {
+  private void handleCreate(ParsedQuery query) throws RuntimeException {
     List<String> columns = new ArrayList<>();
     for (String col : query.columns) {
       String[] parts = col.split("\\s+");
@@ -55,7 +55,7 @@ public class QueryProcessor {
     crudOperations.createTable(query.tableName, columns);
   }
 
-  private void handleInsert(ParsedQuery query) {
+  private void handleInsert(ParsedQuery query) throws RuntimeException {
     Map<String, Object> fields = new HashMap<>();
     for (int i = 0; i < query.columns.size(); i++) {
       fields.put(query.columns.get(i), query.values.get(i));
@@ -63,13 +63,13 @@ public class QueryProcessor {
     crudOperations.insertRecord(query.tableName, fields);
   }
 
-  private void handleSelect(ParsedQuery query) {
+  private void handleSelect(ParsedQuery query) throws RuntimeException {
     List<Record> results = crudOperations.selectRecords(query.tableName, query.condition);
     System.out.println("Selected records: ");
     results.forEach(System.out::println);
   }
 
-  private void handleUpdate(ParsedQuery query) {
+  private void handleUpdate(ParsedQuery query) throws RuntimeException {
     Map<String, Object> updates = query.updateSet
         .entrySet()
         .stream()
@@ -77,11 +77,11 @@ public class QueryProcessor {
     crudOperations.updateRecords(query.tableName, updates, query.condition);
   }
 
-  private void handleDelete(ParsedQuery query) {
+  private void handleDelete(ParsedQuery query) throws RuntimeException {
     crudOperations.deleteRecords(query.tableName, query.condition);
   }
 
-  private void handleDrop(ParsedQuery query) {
+  private void handleDrop(ParsedQuery query) throws RuntimeException {
     crudOperations.dropTable(query.tableName);
   }
 }

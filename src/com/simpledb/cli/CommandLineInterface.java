@@ -33,7 +33,7 @@ public class CommandLineInterface {
       try {
         queryProcessor.processQuery(userInput);
         System.out.println("Command executed successfully.");
-      } catch (IllegalArgumentException e) {
+      } catch (RuntimeException e) {
         System.out.println("Error: " + e.getMessage());
       } catch (Exception e) {
         System.out.println("An unexpected error occurred: " + e.getMessage());

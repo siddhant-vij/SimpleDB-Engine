@@ -66,7 +66,15 @@ public class QueryProcessor {
   private void handleSelect(ParsedQuery query) throws RuntimeException {
     List<Record> results = crudOperations.selectRecords(query.tableName, query.condition);
     System.out.println("Selected records: ");
-    results.forEach(System.out::println);
+    for (Record record : results) {
+      String recordStr = record
+          .getFields()
+          .entrySet()
+          .stream()
+          .map(entry -> String.format("%s=%s", entry.getKey(), entry.getValue()))
+          .collect(Collectors.joining(", "));
+      System.out.println(recordStr);
+    }
   }
 
   private void handleUpdate(ParsedQuery query) throws RuntimeException {

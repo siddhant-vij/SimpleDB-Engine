@@ -2,8 +2,10 @@ package com.simpledb.core;
 
 import com.simpledb.model.Record;
 import com.simpledb.model.Table;
+import com.simpledb.utils.FileUtils;
 import com.simpledb.utils.LockManager;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -37,6 +39,9 @@ public class CRUDOperations {
       }
       Record record = Record.create(fields);
       table.addRecord(record);
+      FileUtils.writeTableToFile(table, database.databasePath + "/" + tableName + ".json");
+    } catch (IOException e) {
+      System.out.println("Error inserting record: " + e.getMessage());
     } finally {
       lockManager.releaseWriteLock(tableName);
     }
@@ -73,6 +78,11 @@ public class CRUDOperations {
             updates.forEach((key, value) -> {
               if (table.getColumns().contains(key)) {
                 record.updateField(key, value);
+                try {
+                  FileUtils.writeTableToFile(table, database.databasePath + "/" + tableName + ".json");
+                } catch (IOException e) {
+                  System.out.println("Error updating record: " + e.getMessage());
+                }
               } else {
                 throw new RuntimeException("Column " + key + " does not exist in table " + tableName);
               }
@@ -91,6 +101,9 @@ public class CRUDOperations {
         throw new RuntimeException("Table " + tableName + " does not exist.");
       }
       table.getRecords().removeIf(condition);
+      FileUtils.writeTableToFile(table, database.databasePath + "/" + tableName + ".json");
+    } catch (IOException e) {
+      System.out.println("Error deleting record: " + e.getMessage());
     } finally {
       lockManager.releaseWriteLock(tableName);
     }

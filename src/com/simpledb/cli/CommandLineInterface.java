@@ -31,7 +31,7 @@ public class CommandLineInterface {
       }
 
       try {
-        queryProcessor.processQuery(userInput);
+        queryProcessor.processQuery(userInput.trim());
         System.out.println("Command executed successfully.");
       } catch (RuntimeException e) {
         System.out.println("Error: " + e.getMessage());

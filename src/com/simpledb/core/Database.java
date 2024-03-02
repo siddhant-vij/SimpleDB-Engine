@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class Database {
   private final Map<String, Table> tables = new HashMap<>();
-  private final String databasePath;
+  final String databasePath;
 
   public Database(String databasePath) {
     this.databasePath = databasePath;
@@ -34,7 +34,10 @@ public class Database {
 
   public void dropTable(String tableName) throws RuntimeException {
     if (!tables.containsKey(tableName)) {
-      throw new RuntimeException("Table does not exist: " + tableName);
+      File tableFile = new File(databasePath + "/" + tableName + ".json");
+      if (!tableFile.exists()) {
+        throw new RuntimeException("Table does not exist: " + tableName);
+      }
     }
     tables.remove(tableName);
     new File(databasePath + "/" + tableName + ".json").delete();
